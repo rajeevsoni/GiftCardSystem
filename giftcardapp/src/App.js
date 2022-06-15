@@ -31,9 +31,10 @@ function Home() {
         </h2>
         <br/><br/>
         <p className="paragraph">
-          This is a sample app which show case gift card management system.
-          Similar to Amamzon gift card system, here admin cna gerenrate gift cards from the admin dashboard.
+          This is a simple gift card management system App developed on .Net Core, RedisJSON and ReactJs.
+          Similar to Amamzon gift card system, here admin caa gerenrate gift cards from the admin dashboard.
           And Consumer can redeem gift card from Consumer Dashboard.
+          
         </p>
       </header>
     </div>
