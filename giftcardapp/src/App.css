@@ -71,3 +71,7 @@
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+table, th, td {
+  border: 1px solid;
+}

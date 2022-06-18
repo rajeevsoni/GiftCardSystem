@@ -27,19 +27,9 @@ namespace GiftCardAPI.Controllers
         {
             var giftCardCollection = _provider.RedisCollection<GiftCard>();
            
-            if (giftCardQuery.Active.HasValue)
+            if (giftCardQuery.IsConsumed.HasValue)
             {
-                giftCardCollection = giftCardCollection.Where(x => x.ExpireOn > DateTime.UtcNow);
-            }
-
-            if (giftCardQuery.Value.HasValue)
-            {
-                giftCardCollection = giftCardCollection.Where(x => x.Value == giftCardQuery.Value.Value);
-            }
-
-            if (!string.IsNullOrEmpty(giftCardQuery.Code))
-            {
-                giftCardCollection = giftCardCollection.Where(x => x.Code == giftCardQuery.Code);
+                giftCardCollection = giftCardCollection.Where(x => x.IsConsumed == giftCardQuery.IsConsumed.Value);
             }
 
             IList<GiftCard> giftCards = await giftCardCollection.ToListAsync();
@@ -61,7 +51,8 @@ namespace GiftCardAPI.Controllers
             return Created("GiftCard", giftCard.Id);
         }
 
-        [HttpPut("/redeem")]
+        [HttpPut]
+        [Route("redeem")]
         public async Task<IActionResult> Redeem([FromBody] RedeemGiftCardRequest redeemGiftCardRequest)
         {
             if(string.IsNullOrEmpty(redeemGiftCardRequest.GiftCardCode))
@@ -70,7 +61,8 @@ namespace GiftCardAPI.Controllers
             }
 
             var giftCardCollection = _provider.RedisCollection<GiftCard>();
-            var validGiftCard = await giftCardCollection.Where(x => x.Code == redeemGiftCardRequest.GiftCardCode).SingleOrDefaultAsync();
+            var all = await giftCardCollection.ToListAsync();
+            var validGiftCard = await giftCardCollection.FirstOrDefaultAsync(x => x.Code == redeemGiftCardRequest.GiftCardCode);
             if(validGiftCard == null || validGiftCard.IsConsumed || validGiftCard.ExpireOn < DateTime.UtcNow)
             {
                 return BadRequest();
